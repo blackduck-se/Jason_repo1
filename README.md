@@ -138,7 +138,7 @@ Open the docker_build.sh script and modify the variables for your settings:
 IMAGE_NAME="srm-custom-connector-example"   #<-- Name of the image to build
 IMAGE_TAG="v1.3"                            #<-- Image Tag
 REG="myregistry:5000"                       #<-- Registry to push the image to after being built, SRM must be able to pull images from this registry.
-CA_CERT="cert-mgr-ca.crt"                   #<-- If you need to add a CA cert to the image, put the filename to copy here
+CA_CERT=""                   #<-- If you need to add a CA cert to the image, put the filename to copy here
 RUNTIME="standalone"                        #<-- To build as a standalone docker container (not running through tool Orchestration, set to True, if running inside of Tool Orchestration set to false.)
 
 # Docker Run Variables
@@ -392,7 +392,7 @@ The Docker run variables only apply when the RUNTIME variable is set to standalo
 IMAGE_NAME="srm-custom-connector-example"  #<-- Name of the image to build, update this to a unique name for the integration
 IMAGE_TAG="v1.3"                           #<-- Image Tag
 REG="myregistry:5000"                      #<-- Registry to push the image to after being built, SRM must be able to pull images from this registry.
-CA_CERT="cert-mgr-ca.crt"                  #<-- If you need to add a CA cert to the image, put the filename to copy here, if this is not needed set this to ""
+CA_CERT=""                                 #<-- If you need to add a CA cert to the image, put the filename to copy here, if this is not needed set this to ""
 RUNTIME="standalone"                #<-- To build as a standalone docker container (i.e not running through tool Orchestration, set to "standalone", to build the container for running through tool orchestration set to "toolOrchestration".)
 
 # Docker Run Variables
