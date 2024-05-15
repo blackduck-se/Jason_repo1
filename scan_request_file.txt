@@ -1,0 +1,20 @@
+[request]
+imageName = "localhost:5000/srm-custom-connector-example:v1.3"
+workDirectory = "/home/sig-user"
+preShellCmd='''
+	ls /usr/local/bin/
+    export POLARIS_API_KEY=$(cat workflow-secrets/polariskey/apikey)
+    export POLARIS_URL=$(/usr/local/bin/tomlq -r '.polaris.url' config/request.toml)
+    export POLARIS_PROJECT_NAME=$(/usr/local/bin/tomlq -r '.polaris.project' config/request.toml)
+    # first pull the results
+    export ExportFile="sourceExport.json"
+    /home/sig-user/pull_dast_results.py --fileName ${ExportFile} --projectName ${POLARIS_PROJECT_NAME} --url ${POLARIS_URL}
+'''
+shellCmd = '''
+source=$(ls /home/sig-user)
+  # Second, convert the data to SRM XML Format
+  export ImportFile="sourceSRMXML.xml"
+  /home/sig-user/convert_dast_results.py --inputFileName ${ExportFile} --outputFileName ${ImportFile}
+'''
+resultFilePath = "/home/sig-user/sourceSRMXML.xml"
+securityActivities = ['dast']

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.synopsys.com/srm/2.5/Input" targetNamespace="http://www.synopsys.com/srm/2.5/Input">
+	<xs:include schemaLocation="srm_types.xsd"/>
+
+	<xs:complexType name="location-with-variants">
+		<xs:complexContent>
+			<xs:extension base="location">
+				<xs:sequence>
+					<xs:element name="variants" minOccurs="0">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>The location variants for the finding.</xs:documentation>
+							</xs:annotation>
+
+							<xs:sequence>
+								<xs:element name="variant" maxOccurs="unbounded" type="variant" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="cwe">
+		<xs:attribute name="id" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>The ID of the associated CWE.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:element name="report">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="findings">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="finding" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="native-id" minOccurs="0">
+											<xs:complexType>
+												<xs:annotation>
+													<xs:documentation>A native identifier assigned to the finding by the tool.</xs:documentation>
+												</xs:annotation>
+
+												<xs:attribute name="name" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Identifier name.</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+												<xs:attribute name="value" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>Identifier value.</xs:documentation>
+													</xs:annotation>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="cwe" minOccurs="0" type="cwe" />
+
+										<xs:element name="cves" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="cve" maxOccurs="unbounded" type="cve"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="tool" type="tool-data" />
+
+										<xs:element name="location" minOccurs="0" type="location-with-variants" />
+
+										<xs:element name="dataflows" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="dataflow" minOccurs="0" maxOccurs="unbounded" type="dataflow"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="host" minOccurs="0" type="host" />
+
+										<xs:element name="description" minOccurs="0" type="description" />
+
+										<xs:element name="comment" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="tool" type="xs:string">
+															<xs:annotation>
+																<xs:documentation>The originating tool for the comment.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="time" type="xs:dateTime">
+															<xs:annotation>
+																<xs:documentation>The date and time that the comment was created.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="user" type="xs:string">
+															<xs:annotation>
+																<xs:documentation>The display name of the user who created the comment.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="metadata" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="value" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:annotation>
+																<xs:documentation>A metadata value for the finding.</xs:documentation>
+															</xs:annotation>
+
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="key" type="xs:string">
+																		<xs:annotation>
+																			<xs:documentation>The key for the metadata value.</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="element" type="element" minOccurs="0" />
+
+										<xs:element name="container" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="image" type="container-image-specifier" minOccurs="1" maxOccurs="1" />
+													<xs:element name="alternative-images" minOccurs="0" maxOccurs="1">
+														<xs:complexType>
+															<xs:annotation>
+																<xs:documentation>
+																	A list of alternative images considered to be an exact match/alternative for the &lt;image&gt; element associated with
+																	this result. Generally used when multiple builds of the same image are scanned, where each image has a different digest despite
+																	the exact same contents.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:sequence>
+																<xs:element name="image" type="container-image-specifier" minOccurs="0" maxOccurs="unbounded" />
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+
+									<xs:attribute name="type" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>
+												The detection method used to detect the finding. The natively-supported detection methods are:
+												"static", "dynamic", "component", "interactive", "threatmodel", "network", "database", "container",
+												"cloudinfrastructure", "bugbounty", "iac", "unknown". Any value outside this list will be considered a custom type, which may
+												prevent correlation.
+											</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="severity" type="severity">
+										<xs:annotation>
+											<xs:documentation>The severity of the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="triage-status" type="triage-status">
+										<xs:annotation>
+											<xs:documentation>The triage status of the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+
+			<xs:attribute name="date" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>The date on which the report was generated.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="generator" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the tool that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="version" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of the tool that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="tool" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						If provided, Code Dx will treat the associated XML file as if it originated from the given tool for auto-archival purposes.
+						For example, if tool="SpotBugs", the contents of that file will cause any previously-analyzed SpotBugs output to be auto-archived.
+						Similarly, analyzing a SpotBugs file after a &lt;report tool="SpotBugs"/&gt; file will cause the &lt;report tool="SpotBugs"/&gt; file to be auto-archived.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

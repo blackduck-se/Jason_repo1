@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="severity">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="unspecified" />
+			<xs:enumeration value="info" />
+			<xs:enumeration value="low" />
+			<xs:enumeration value="medium" />
+			<xs:enumeration value="high" />
+			<xs:enumeration value="critical" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="triage-status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="escalated" />
+			<xs:enumeration value="ignored" />
+			<xs:enumeration value="false-positive" />
+			<xs:enumeration value="fixed" />
+			<xs:enumeration value="mitigated" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="finding-status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="new" />
+			<xs:enumeration value="existing" />
+			<xs:enumeration value="gone" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="predicted-status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="escalated" />
+			<xs:enumeration value="false-positive" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="locationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="file" />
+			<xs:enumeration value="raw-file" />
+			<xs:enumeration value="url" />
+			<xs:enumeration value="library" />
+			<xs:enumeration value="logical" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="descriptionFormat">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="plain-text" />
+			<xs:enumeration value="markdown" />
+			<xs:enumeration value="html" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="description">
+		<xs:annotation>
+			<xs:documentation>A brief description.</xs:documentation>
+		</xs:annotation>
+
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="format" type="descriptionFormat">
+					<xs:annotation>
+						<xs:documentation>The format of the description content.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="include-in-hash" type="xs:boolean" default="true" use="optional">
+					<xs:annotation>
+						<xs:documentation>If true, the description content will be included in the result identity hash.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="element">
+		<xs:attribute name="type" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The element type. Can accept any string. Standard values are: form-field, query-parameter, query-string, cookie, http-header, request-body, method, class, variable, file, url, unknown.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The element name.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="tool-data">
+		<xs:attribute name="name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The name of the tool that detected the finding.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="category" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The tool-provided category name of the finding.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="code" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The tool-provided code for the finding.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="manual-data">
+		<xs:attribute name="tool" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The name of the tool attributed with the manual entry.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="location">
+		<xs:sequence>
+			<xs:element name="line" minOccurs="0">
+				<xs:complexType>
+					<xs:attribute name="is-indeterminate" type="xs:boolean" use="optional">
+						<xs:annotation>
+							<xs:documentation>If true, the line number is indeterminate.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="start" type="xs:positiveInteger" use="optional">
+						<xs:annotation>
+							<xs:documentation>The starting line number of the location.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="end" type="xs:positiveInteger" use="optional">
+						<xs:annotation>
+							<xs:documentation>The ending line number of the location.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="column" minOccurs="0">
+				<xs:complexType>
+					<xs:attribute name="is-indeterminate" type="xs:boolean" use="optional">
+						<xs:annotation>
+							<xs:documentation>If true, the column number is indeterminate.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="start" type="xs:positiveInteger" use="optional">
+						<xs:annotation>
+							<xs:documentation>The starting column number of the location.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="end" type="xs:positiveInteger" use="optional">
+						<xs:annotation>
+							<xs:documentation>The ending column number of the location.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+
+
+		<xs:attribute name="type" type="locationType" use="required">
+			<xs:annotation>
+				<xs:documentation>The type of path this location contains.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="path" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The path corresponding with the location.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="location-with-raw-path">
+		<xs:complexContent>
+			<xs:extension base="location">
+				<xs:attribute name="raw-path" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>The raw path for the location, as reported by the tool.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="http-request">
+		<xs:sequence>
+			<xs:element name="headers" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The headers sent with the attack request.</xs:documentation>
+				</xs:annotation>
+
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="body" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The body of the attack request (base64 encoding).</xs:documentation>
+				</xs:annotation>
+
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="truncated" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>Tells whether the request body was truncated once stored in Code Dx</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="original-length" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>The length of the body before truncation</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="length" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>The length of the body after truncation</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+
+		<xs:attribute name="method" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The request method associated with the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="path" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The request path associated with the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="query" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The query string associated with the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="http-version" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The request HTTP version associated with the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="http-response">
+		<xs:sequence>
+			<xs:element name="headers" minOccurs="0">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>The headers sent with the attack response from the server.</xs:documentation>
+					</xs:annotation>
+
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="body" minOccurs="0">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>The body of the attack response (base64 encoding).</xs:documentation>
+					</xs:annotation>
+
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="truncated" type="xs:boolean">
+								<xs:annotation>
+									<xs:documentation>Tells whether the request body was truncated once stored in Code Dx</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="original-length" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>The length of the body before truncation</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="length" type="xs:integer">
+								<xs:annotation>
+									<xs:documentation>The length of the body after truncation</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+
+		<xs:attribute name="code" type="xs:positiveInteger">
+			<xs:annotation>
+				<xs:documentation>The response code from the server for the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="reason-phrase" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The phrase associated with the response code on the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="http-version" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The response HTTP version associated with the attack variant.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="additional-value">
+		<xs:annotation>
+			<xs:documentation>A single additional data value for the variant.</xs:documentation>
+		</xs:annotation>
+
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="is-identifier" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation>Whether or not this value should be considered 'identifying'.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="key" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>The key of the value.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="include-in-hash" type="xs:boolean" default="true" use="optional">
+					<xs:annotation>
+						<xs:documentation>If true, the metadata content will be included in the result identity hash.</xs:documentation>								</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="variant">
+		<xs:sequence>
+			<xs:element name="request" type="http-request" minOccurs="0" />
+			<xs:element name="response" type="http-response" minOccurs="0" />
+			<xs:element name="additional-values" minOccurs="0">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Lists out any additional data values associated with the variant.</xs:documentation>
+					</xs:annotation>
+
+					<xs:sequence>
+						<xs:element name="additional-value" type="additional-value" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="cve">
+		<xs:attribute name="year" type="xs:integer" use="required"/>
+		<xs:attribute name="sequence-number" type="xs:integer" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="host">
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="fqdn" type="xs:string"/>
+				<xs:element name="hostname" type="xs:string"/>
+				<xs:element name="netbios-name" type="xs:string"/>
+				<xs:element name="ip-address" type="xs:string"/>
+				<xs:element name="mac-address" type="xs:string"/>
+				<xs:element name="operating-system" type="xs:string"/>
+				<xs:element name="environment" type="xs:string"/>
+				<xs:element name="port">
+					<xs:complexType>
+						<xs:attribute name="num" type="xs:integer"/>
+						<xs:attribute name="protocol" type="xs:string"/>
+						<xs:attribute name="state" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="container-alias-explicit">
+		<xs:attribute name="registry-label" type="xs:string" use="optional" />
+		<xs:attribute name="registry-host" type="xs:string" use="optional" />
+		<xs:attribute name="repository" type="xs:string" use="required" />
+		<xs:attribute name="tag" type="xs:string" use="optional" />
+		<xs:attribute name="layer" type="xs:string" use="optional" />
+	</xs:complexType>
+	<xs:complexType name="container-alias-uri">
+		<xs:attribute name="value" type="xs:string" use="required" />
+	</xs:complexType>
+	<xs:complexType name="container-alias-simple">
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="container-image-specifier">
+		<xs:sequence>
+			<xs:element name="aliases" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="explicit" type="container-alias-explicit" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="uri" type="container-alias-uri" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="simple" type="container-alias-simple" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="layers">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="layer" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="digest" type="xs:string" use="required" />
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+
+		<xs:attribute name="digest" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="dataflow-node-with-raw-location">
+		<xs:all>
+			<xs:element name="location" type="location-with-raw-path" />
+			<xs:element name="remark" type="xs:string" minOccurs="0" />
+			<xs:element name="dataflows" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="dataflow" type="dataflow-with-raw-location" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="dataflow-node">
+		<xs:all>
+			<xs:element name="location" type="location" />
+			<xs:element name="remark" type="xs:string" minOccurs="0" />
+			<xs:element name="dataflows" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="dataflow" type="dataflow" minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="dataflow">
+		<xs:sequence>
+			<xs:element name="node" type="dataflow-node" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="dataflow-with-raw-location">
+		<xs:sequence>
+			<xs:element name="node" type="dataflow-node-with-raw-location" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

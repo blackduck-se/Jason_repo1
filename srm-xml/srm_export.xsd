@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.synopsys.com/srm/2.5/Report" targetNamespace="http://www.synopsys.com/srm/2.5/Report">
+	<xs:include schemaLocation="srm_types.xsd" />
+
+	<xs:complexType name="exported-http-request">
+		<xs:complexContent>
+			<xs:extension base="http-request">
+				<xs:attribute name="hash" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>The hash value Code Dx uses to uniquely identify the request.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+
+				<xs:attribute name="host" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>The hostname specified in the request, if applicable.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="exported-http-response">
+		<xs:complexContent>
+			<xs:extension base="http-response">
+				<xs:attribute name="hash" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>The hash value Code Dx uses to uniquely identify the response.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="exported-variant">
+		<xs:sequence>
+			<xs:element name="request" type="exported-http-request" minOccurs="0" />
+			<xs:element name="response" type="exported-http-response" minOccurs="0" />
+			<xs:element name="additional-values" minOccurs="0">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Lists out any additional data values associated with the variant.</xs:documentation>
+					</xs:annotation>
+
+					<xs:sequence>
+						<xs:element name="additional-value" type="additional-value" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="cwe">
+		<xs:simpleContent>
+			<xs:annotation>
+				<xs:documentation>The name of the CWE.</xs:documentation>
+			</xs:annotation>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="xs:integer" use="required">
+					<xs:annotation>
+						<xs:documentation>The ID of the associated CWE.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="href" type="xs:anyURI">
+					<xs:annotation>
+						<xs:documentation>A URL for more information on the CWE.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="standards">
+		<xs:annotation>
+			<xs:documentation>Lists any standards violated by a finding.</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+			<xs:element name="standard" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Describes a single standards violation.</xs:documentation>
+					</xs:annotation>
+
+					<xs:attribute name="name" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>The name of the standard describing the violation.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="violation" type="xs:string" use="required">
+						<xs:annotation>
+							<xs:documentation>The specific item in the standard being violated.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="rule">
+		<xs:annotation>
+			<xs:documentation>Describes the rule associated with a tool result or a finding.</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+			<xs:element name="description" minOccurs="0" type="description" />
+		</xs:sequence>
+
+		<xs:attribute name="code" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The unique code identifying the rule.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The full name of the rule.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="comments">
+		<xs:sequence>
+			<xs:element name="comment" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="tool" type="xs:string" use="optional">
+								<xs:annotation>
+									<xs:documentation>The source tool of the comment, if it came from outside of Code Dx.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="time" type="xs:dateTime">
+								<xs:annotation>
+									<xs:documentation>The date and time that the comment was created.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+							<xs:attribute name="commenter" type="xs:string">
+								<xs:annotation>
+									<xs:documentation>The display name of the person who created the comment.</xs:documentation>
+								</xs:annotation>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="report">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="project" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:annotation>
+							<xs:documentation>Denotes a project whose data is present in the report. Typically there will be exactly one project, but depending on the filter used when generating the report, there may be multiple.</xs:documentation>
+						</xs:annotation>
+
+						<xs:sequence>
+							<xs:element name="metadata" minOccurs="0">
+								<xs:complexType>
+									<xs:annotation>
+										<xs:documentation>Lists out user-provided project metadata, if any has been supplied.</xs:documentation>
+									</xs:annotation>
+
+									<xs:sequence>
+										<xs:element name="value" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:annotation>
+													<xs:documentation>A single metadata value for the project.</xs:documentation>
+												</xs:annotation>
+
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="name" type="xs:string">
+															<xs:annotation>
+																<xs:documentation>The name of the metadata field.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="id" type="xs:string" use="optional">
+															<xs:annotation>
+																<xs:documentation>The ID assigned to the chosen value, if applicable.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+
+						<xs:attribute name="id" type="xs:integer" use="required">
+							<xs:annotation>
+								<xs:documentation>The ID of the project.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="name" type="xs:string" use="required">
+							<xs:annotation>
+								<xs:documentation>The name of the project.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="findings">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="finding" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="cwe" minOccurs="0" type="cwe" />
+										<xs:element name="cves" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="cve" maxOccurs="unbounded" type="cve"/>
+												</xs:sequence>
+											</xs:complexType>	
+										</xs:element>
+										<xs:element name="standards" minOccurs="0" type="standards" />
+										<xs:element name="rule" type="rule" />
+										<xs:element name="description" minOccurs="0" type="description" />
+										<xs:element name="location" minOccurs="0" type="location-with-raw-path" />
+										<xs:element name="host" minOccurs="0" type="host" />
+										<xs:element name="element" minOccurs="0" type="element" />
+
+										<xs:element name="code" minOccurs="0">
+											<xs:complexType>
+												<xs:annotation>
+													<xs:documentation>A brief source code snippet showing the code surrounding the finding.</xs:documentation>
+												</xs:annotation>
+
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="start-line" type="xs:positiveInteger">
+															<xs:annotation>
+																<xs:documentation>The line number of the first line included in the snippet. For example, if the finding was on line 44, the snippet may include lines 40-48, in which case, start-line would be 40.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										
+										<xs:element name="issue" minOccurs="0">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:annotation>
+														<xs:documentation>The Jira issue associated with the finding.</xs:documentation>
+													</xs:annotation>
+													<xs:extension base="xs:string">
+														<xs:attribute name="key" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The ID of the associated issue.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="status" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The status of the associated issue.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="resolution" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The resolution of the associated issue.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="href" type="xs:anyURI">
+															<xs:annotation>
+																<xs:documentation>A URL for more information on the issue.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										
+										<xs:element name="work-item" minOccurs="0">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:annotation>
+														<xs:documentation>The Azure DevOps work item associated with the finding.</xs:documentation>
+													</xs:annotation>
+													<xs:extension base="xs:string">
+														<xs:attribute name="id" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The ID of the associated work item.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="state" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The state of the associated work item.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="reason" type="xs:string" use="required">
+															<xs:annotation>
+																<xs:documentation>The reason of the associated work item.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="href" type="xs:anyURI">
+															<xs:annotation>
+																<xs:documentation>A URL for more information on the work item.</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="predicted-status" type="predicted-status" minOccurs="0" maxOccurs="1">
+											<xs:attribute name="confidence" type="xs:string"/>
+										</xs:element>
+
+										<xs:element name="results" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="result" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="tool" minOccurs="0" >
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="tool-data">
+																				<xs:sequence>
+																					<xs:element name="rule" type="rule" />
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="manual" minOccurs="0">
+																	<xs:complexType>
+																		<xs:complexContent>
+																			<xs:extension base="manual-data">
+																				<xs:sequence>
+																					<xs:element name="rule" type="rule" />
+																				</xs:sequence>
+																			</xs:extension>
+																		</xs:complexContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="cwe" minOccurs="0" type="cwe" />
+																<xs:element name="cves" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="cve" maxOccurs="unbounded" type="cve"/>
+																		</xs:sequence>
+																	</xs:complexType>	
+																</xs:element>
+																<xs:element name="location" minOccurs="0" type="location-with-raw-path" />
+																<xs:element name="dataflows" minOccurs="0">				
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="dataflow" type="dataflow-with-raw-location" minOccurs="0" maxOccurs="unbounded"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="host" minOccurs="0" type="host" />
+																<xs:element name="element" minOccurs="0" type="element" />
+																<xs:element name="description" minOccurs="0" type="description" />
+																<xs:element name="variants" minOccurs="0">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="variant" minOccurs="0" maxOccurs="unbounded" type="exported-variant" />
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="comments" minOccurs="0" type="comments" />
+																<xs:element name="additional-values" minOccurs="0">
+																	<xs:complexType>
+																		<xs:annotation>
+																			<xs:documentation>Lists out any additional data values associated with the variant.</xs:documentation>
+																		</xs:annotation>
+
+																		<xs:sequence>
+																			<xs:element name="additional-value" type="additional-value" maxOccurs="unbounded" />
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="container" minOccurs="0" maxOccurs="1">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="image" type="container-image-specifier" minOccurs="1" maxOccurs="1" />
+																			<xs:element name="alternative-images" minOccurs="0" maxOccurs="1">
+																				<xs:complexType>
+																					<xs:annotation>
+																						<xs:documentation>
+																							A list of alternative images considered to be an exact match/alternative for the &lt;image&gt; element associated with
+																							this result. Generally used when multiple builds of the same image are scanned, where each image has a different digest despite
+																							the exact same contents.
+																						</xs:documentation>
+																					</xs:annotation>
+																					<xs:sequence>
+																						<xs:element name="image" type="container-image-specifier" minOccurs="0" maxOccurs="unbounded" />
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+
+															<xs:attribute name="id" type="xs:integer">
+																<xs:annotation>
+																	<xs:documentation>The unique ID assigned to this tool result by Code Dx.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="detection-method" type="xs:string">
+																<xs:annotation>
+																	<xs:documentation>The detection method used to detect the result.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="hash" type="xs:string">
+																<xs:annotation>
+																	<xs:documentation>A semi-unique identifer used by Code Dx. Paired with the path, this tells if Code Dx considers results to be duplicates or not.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="creation-time" type="xs:dateTime">
+																<xs:annotation>
+																	<xs:documentation>The date on which this result was recorded.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="severity" type="severity">
+																<xs:annotation>
+																	<xs:documentation>The tool reported severity of the result.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="triage-status" type="triage-status">
+																<xs:annotation>
+																	<xs:documentation>The tool reported triage status of the result.</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+
+										<xs:element name="comments" minOccurs="0" type="comments" />
+									</xs:sequence>
+
+									<xs:attribute name="id" type="xs:integer">
+										<xs:annotation>
+											<xs:documentation>The unique ID assigned to this finding by Code Dx.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="detection-method" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>The detection method used to detect the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="first-seen" type="xs:dateTime">
+										<xs:annotation>
+											<xs:documentation>The date on which the finding was first recorded by Code Dx.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="last-updated" type="xs:dateTime">
+										<xs:annotation>
+											<xs:documentation>The date on which the finding was last changed or updated.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="severity" type="severity">
+										<xs:annotation>
+											<xs:documentation>The severity of the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="triage-status" type="triage-status">
+										<xs:annotation>
+											<xs:documentation>The triage status of the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="finding-status" type="finding-status">
+										<xs:annotation>
+											<xs:documentation>The presence status of the finding.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="assignee" type="xs:string" use="optional">
+										<xs:annotation>
+											<xs:documentation>The user to whom the finding is assigned to, if applicable.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+
+			<xs:attribute name="date" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>The date/time on which the report was generated.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="generator" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the tool that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="generator-version" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of the tool that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="version" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The version of the tool that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+
+			<xs:attribute name="author" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The name of the user that generated the report.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

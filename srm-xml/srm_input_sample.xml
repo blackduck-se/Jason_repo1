@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<report date="2019-08-06" tool="My Custom Tool">
+	<findings>						
+		<finding severity="high">
+			<native-id name="My Tool ID" value="abc123" />
+			<cwe id="259" />
+			<tool name="My Custom Tool" category="Security" code="Hardcoded-Password" />
+			<location type="file" path="java/org/owasp/webgoat/lessons/WsSAXInjection.java">
+				<line start="64" end="66" />
+			</location>
+			<description format="plain-text" include-in-hash="false">A password is hardcoded here.</description>
+			<metadata>
+				<value key="Password">password</value>
+			</metadata>
+		</finding>
+		<finding severity="high" type="dynamic">
+			<cwe id="310" />
+			<tool name="My Custom Tool" category="Security" code="Cookie without HttpOnly flag set" />
+			<location type="url" path="/webgoat/attack">
+				<variants>
+					<variant>
+						<request method="GET" path="/webgoat/attack" query="">
+							<headers>
+								Accept: text/html, application/xhtml+xml, */*
+								Accept-Language: en-US
+								User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko
+								Accept-Encoding: gzip, deflate
+								Host: 192.168.216.139:8080
+								Authorization: Basic Z3Vlc3Q6Z3Vlc3Q=
+								Proxy-Connection: Keep-Alive
+								DNT: 1
+							</headers>
+							<body truncated="false" original-length="0" length="0"></body>
+						</request>
+						<response code="200">
+							<headers>
+								Server: Apache-Coyote/1.1
+								Pragma: No-cache
+								Cache-Control: no-cache
+								Expires: Wed, 31 Dec 1969 19:00:00 EST
+								Set-Cookie: JSESSIONID=1115D46CB13A097B975996BF90C21455; Path=/WebGoat
+								Content-Type: text/html;charset=ISO-8859-1
+								Content-Length: 3931
+								Date: Thu, 16 Oct 2014 18:04:24 GMT
+							</headers>
+							<body truncated="false" original-length="3930" length="3930">DQoNCg0KDQo8IURPQ1RZUEUgaHRtbCBQVUJMSUMgIi0vL1czQy8vRFREIFhIVE1MIDEuMCBUcmFuc2l0aW9uYWwvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvVFIveGh0bWwxL0RURC94aHRtbDEtdHJhbnNpdGlvbmFsLmR0ZCI+DQo8aHRtbCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PUlTTy04ODU5LTEiIC8+DQo8dGl0bGU+V2ViR29hdCBWNS40PC90aXRsZT4NCjxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iY3NzL3dlYmdvYXQuY3NzIiB0eXBlPSJ0ZXh0L2NzcyIgLz4NCjwvaGVhZD4NCg0KPGJvZHk+DQoNCjxkaXYgaWQ9IndyYXAiPg0KPGRpdiBpZD0idG9wIj48L2Rpdj4NCjxkaXYgaWQ9InN0YXJ0Ij4NCjxwPlRoYW5rIHlvdSBmb3IgdXNpbmcgV2ViR29hdCEgVGhpcyBwcm9ncmFtIGlzIGEgZGVtb25zdHJhdGlvbiBvZiBjb21tb24gd2ViIGFwcGxpY2F0aW9uIGZsYXdzLg0KVGhlIGV4ZXJjaXNlcyBhcmUgaW50ZW5kZWQgdG8gcHJvdmlkZSBoYW5kcyBvbiBleHBlcmllbmNlIHdpdGgNCmFwcGxpY2F0aW9uIHBlbmV0cmF0aW9uIHRlc3RpbmcgdGVjaG5pcXVlcy4gPC9wPg0KPHA+VGhlIFdlYkdvYXQgcHJvamVjdCBpcyBsZWQNCmJ5IEJydWNlIE1heWhldy4gUGxlYXNlIHNlbmQgYWxsIGNvbW1lbnRzIHRvIEJydWNlIGF0IFdlYkdvYXRAb3dhc3Aub3JnLjwvcD4NCg0KPGRpdiBpZD0idGVhbSI+DQo8dGFibGUgYm9yZGVyPSIwIiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ibGVzc29uVGV4dCI+DQoJPHRyPg0KCQk8dGQgd2lkdGg9IjUwJSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iaHR0cDovL3d3dy5vd2FzcC5vcmciPjxpbWcNCgkJCWJvcmRlcj0iMCIgc3JjPSJpbWFnZXMvbG9nb3Mvb3dhc3AuanBnIiBhbHQ9Ik9XQVNQIEZvdW5kYXRpb24iDQoJCQlsb25nZGVzYz0iaHR0cDovL3d3dy5vd2FzcC5vcmciIC8+PC9hPjwvZGl2Pg0KCQk8L3RkPg0KCQk8dGQgd2lkdGg9IjUwJSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iaHR0cDovL3d3dy5hc3BlY3RzZWN1cml0eS5jb20iPjxpbWcNCgkJCWJvcmRlcj0iMCIgc3JjPSJpbWFnZXMvbG9nb3MvYXNwZWN0LmpwZyIgYWx0PSJBc3BlY3QgU2VjdXJpdHkiDQoJCQlsb25nZGVzYz0iaHR0cDovL3d3dy5hc3BlY3RzZWN1cml0eS5jb20iIC8+PC9hPjwvZGl2Pg0KCQk8L3RkPg0KCTwvdHI+DQoJPHRyPg0KCQk8dGQgd2lkdGg9IjUwJSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PHNwYW4gY2xhc3M9InN0eWxlMSI+PGJyIC8+DQoJCVdlYkdvYXQgRGVzaWduIFRlYW0gPC9zcGFuPjwvZGl2Pg0KCQk8L3RkPg0KCQk8dGQgd2lkdGg9IjUwJSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PHNwYW4gY2xhc3M9InN0eWxlMSI+PGJyIC8+DQoJCVY1LjMgTGVzc29uIENvbnRyaWJ1dGVycyA8L3NwYW4+PC9kaXY+DQoJCTwvdGQ+DQoJPC90cj4NCgk8dHI+DQoJCTx0ZCB2YWxpZ249InRvcCI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+QnJ1Y2UgTWF5aGV3PC9kaXY+DQoJCTxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+RGF2aWQgQW5kZXJzb248L2Rpdj4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5Sb2dhbiBEYXdlczwvZGl2Pg0KCQk8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPkxhdXJlbmNlIENhc2V5IChHcmFwaGljcyk8L2Rpdj4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5CcmlhbiBDaW9tZWk8L2Rpdj4NCgkJPC90ZD4NCgkJPHRkIHZhbGlnbj0idG9wIj4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5DaHVjayBXaWxsaXM8L2Rpdj4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5DYW0gTW9ycmlzPC9kaXY+DQoJCTxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+WWlhbm5pcyBQYXZsb3NvZ2xvdTwvZGl2Pg0KCQk8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPjwvZGl2Pg0KDQoJCTwvdGQ+DQoJPC90cj4NCgk8dHI+DQoJCTx0ZCBoZWlnaHQ9IjI1IiB2YWxpZ249ImJvdHRvbSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PHNwYW4gY2xhc3M9InN0eWxlMSI+U3BlY2lhbCBUaGFua3MNCgkJZm9yIFY1LjM8L3NwYW4+PC9kaXY+DQoJCTwvdGQ+DQoJCTx0ZCBoZWlnaHQ9IjI1IiB2YWxpZ249ImJvdHRvbSI+DQoJCTxkaXYgYWxpZ249ImNlbnRlciI+PHNwYW4gY2xhc3M9InN0eWxlMSI+RG9jdW1lbnRhdGlvbg0KCQlDb250cmlidXRlcnM8L3NwYW4+PC9kaXY+DQoJCTwvdGQ+DQoJPC90cj4NCgk8dHI+DQoJCTx0ZD4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5DaHJpc3RpbmUgKE1hdmVuKTwvZGl2Pg0KCQk8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPk1hcmVrIEphd3VyZWsgKEludGVybmF0aW9uYWxpemF0aW9uKTwvZGl2Pg0KCQk8YnIvPjxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+VG8gYWxsIHdobyBoYXZlIHNlbnQgY29tbWVudHM8L2Rpdj4NCgkJDQoJCTwvdGQ+DQoJCTx0ZD4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5TaGVyaWYgS291c3NhPGJyIC8+DQoJCQkoaHR0cDovL3d3dy5zb2Z0d2FyZXNlY3VyZWQuY29tKQ0KCQk8L2Rpdj4NCgkJPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj5BdW5nIEtoYW50PGJyIC8+DQoJCShodHRwOi8veWVoZy5vcmcvKTwvZGl2Pg0KCQk8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPkVyd2luIEdlaXJuYWVydDxiciAvPg0KCQkoaHR0cDovL3d3dy56aW9uc2VjdXJpdHkuY29tLyk8L2Rpdj4NCgkJPC90ZD4NCgk8L3RyPg0KCTx0cj4NCgkJPHRkIGNvbHNwYW49IjIiPg0KCQk8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPg0KCQk8Zm9ybSBpZD0iZm9ybSIgbmFtZT0iZm9ybSIgbWV0aG9kPSJwb3N0IiBhY3Rpb249ImF0dGFjayI+PGlucHV0DQoJCQl0eXBlPSJzdWJtaXQiIG5hbWU9InN0YXJ0IiB2YWx1ZT0iU3RhcnQgV2ViR29hdCIgLz48L2Zvcm0+DQoJCTwvZGl2Pg0KCQk8L3RkPg0KCTwvdHI+DQoJPHRyPg0KCQk8dGQ+DQoJCTxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+Jm5ic3A7PC9kaXY+DQoJCTwvdGQ+DQoJPC90cj4NCjwvdGFibGU+DQo8L2Rpdj4NCjwvZGl2Pg0KPGRpdiBhbGlnbj0iY2VudGVyIiBjbGFzcz0ic3R5bGUyIj4mbmJzcDs8L2Rpdj4NCjxkaXYgYWxpZ249ImNlbnRlciIgY2xhc3M9InN0eWxlMiI+Jm5ic3A7PC9kaXY+DQo8ZGl2IGFsaWduPSJjZW50ZXIiIGNsYXNzPSJzdHlsZTIiPiZuYnNwOzwvZGl2Pg0KPGRpdiBpZD0id2FybmluZyI+V0FSTklORzxiciAvPg0KV2hpbGUgcnVubmluZyB0aGlzIHByb2dyYW0sIHlvdXIgbWFjaGluZSBpcyBleHRyZW1lbHkgdnVsbmVyYWJsZSB0bw0KYXR0YWNrIGlmIHlvdSBhcmUgbm90IHJ1bm5pbmcgb24gbG9jYWxob3N0LiBJZiB0b3UgYXJlIE5PVCBydW5uaW5nIG9uIGxvY2FsaG9zdCAoZGVmYXVsdCBjb25maWd1cmF0aW9uKSwgWW91IHNob3VsZCBkaXNjb25uZWN0IGZyb20gdGhlIG5ldHdvcmsgd2hpbGUgdXNpbmcgdGhpcyBwcm9ncmFtLg0KPGJyIC8+DQo8YnIgLz4NClRoaXMgcHJvZ3JhbSBpcyBmb3IgZWR1Y2F0aW9uYWwgcHVycG9zZXMgb25seS4gVXNlIG9mIHRoZXNlIHRlY2huaXF1ZXMNCndpdGhvdXQgcGVybWlzc2lvbiBjb3VsZCBsZWFkIHRvIGpvYiB0ZXJtaW5hdGlvbiwgZmluYW5jaWFsIGxpYWJpbGl0eSwNCmFuZC9vciBjcmltaW5hbCBwZW5hbHRpZXMuPC9kaXY+DQo8L2Rpdj4NCjwvYm9keT4NCjwvaHRtbD4N</body>
+						</response>
+					</variant>
+				</variants>
+			</location>
+		</finding>
+		<finding severity="medium" type="container">
+			<tool name="My Custom Tool" category="Vulnerability" code="Vulnerable Dependency" />
+			<container>
+				<image digest="sha256:e24bcaf41034c28b6a08aba94507a169ae23f2b87899e225a3d18fe8c36d26f5">
+					<aliases>
+						<explicit
+							registry-host="index.docker.io"
+							registry-label="Docker Hub"
+							repository="webgoat/webgoat-8.0"
+							tag="v8.1.0"
+							layer="sha256:f1b850175830ce71410b40c55e0e87ba62554ffb7de33e19bfdf9f65bb8f7d97"
+						/>
+						<uri value="webgoat/webgoat-8.0:v8.1.0" />
+						<uri value="webgoat/webgoat-8.0:latest" />
+						<simple name="/opt/input/webgoat-8.0-v8.1.0.gz" />
+					</aliases>
+					<layers>
+						<layer digest="sha256:3c816b4ead84066ec2cadec2b943993aaacc3fe35fcd77ada3d09dc4f3937313" />
+						<layer digest="sha256:388282b71f87e3a306564e4a5a8d0ac2677c9f2d84d8017be58825be7e90b62a" />
+						<layer digest="sha256:9da31196a3a2c4809ccf26419ebb0ec851cc7bfb6fac7c2b6aa0ed83f2e4d2bc" />
+						<layer digest="sha256:1d4d366b5d92ffff358393aec3e6ef867b51753cee9f87cd12e310506b463ef1" />
+						<layer digest="sha256:1bbe960e4a97e745ab39dca85b8e7fcefaee59956a8ea1a7a0a81cca9217d92b" />
+						<layer digest="sha256:71722dc4dd59f0de3c9e41c1ec49dbef684ceabc00982f6ef163bba94d695133" />
+						<layer digest="sha256:f1b850175830ce71410b40c55e0e87ba62554ffb7de33e19bfdf9f65bb8f7d97" />
+						<layer digest="sha256:646f13249748edf95d6f3a0d9ee3ede877713c779d9eed49603ac49863acc579" />
+						<layer digest="sha256:ed092dc97bc9105e7274eaf7ba2a1b281dd2d4c5caa455b00bcc36572ba7e566" />
+					</layers>
+				</image>
+			</container>
+		</finding>
+	</findings>
+</report>
