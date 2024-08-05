@@ -198,3 +198,9 @@ pip-delete-this-directory.txt
 *.crt 
 *.cert
 *.pem
+
+# Ignore local testing files
+mast/docker/test_env_vars.env
+mast/data.json
+mast/my*.sh
+mast/*.xml
