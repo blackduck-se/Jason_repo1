@@ -16,7 +16,16 @@ def main(sourcePath, srmProjectName, projectBranchName, srmURL, srmAPIKey):
   # Convert the data to SRM XML Format
   print(f"Converting {sourcePath} to SRM XML format...")
   importFile = "sourceSRMXML.xml"
-  convert_mast_results.createSRMXML(sourcePath, importFile)
+  detection_methods = convert_mast_results.createSRMXML(sourcePath, importFile)
+
+  # add detection methods, if needed
+  if detection_methods != []:
+    headers = {'Authorization': 'Bearer ' + srmAPIKey}
+    # add trailing slash to srm url if needed:
+    if not srmURL.endswith("/"):
+        srmURL += "/"  
+    for method in detection_methods:
+      srmPost.create_detection_method(srmURL, method, headers)
 
   # Push the results to SRM
   if projectBranchName is None or projectBranchName == "":

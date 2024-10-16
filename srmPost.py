@@ -52,7 +52,30 @@ def create_project(api_url, project_name, headers):
         print('Failed to create project. Status code: '+str(response.status_code))
         print('Failed to create project Name: '+ project_name)
         return None
-
+    
+def create_detection_method(api_url, detection_method, headers):
+    methods = requests.get(f"{api_url}srm/api/detection-methods", headers=headers)
+    if methods.status_code == 200:
+        # Go through list of methods and see if the method already exists:
+        currentMethods = methods.json()
+        for meth in currentMethods:
+            if meth.get("name").lower() == detection_method.lower():
+                print(f"Found detection method: {detection_method}")
+                return meth.get("id") 
+        # if we get here we didn't find it, so we should create it
+        response = requests.post(f"{api_url}srm/api/detection-methods", json={'name': detection_method}, headers=headers)
+        if response.status_code == 200:
+            print(f'Detection method: {detection_method} created successfully.')
+            return response.json()['id']
+        else:
+            print('Failed to create detection method. Status code: '+str(response.status_code))
+            print('Failed to create detection method: '+ detection_method)
+            return None        
+    else:
+        print('Failed to get detection methods. Status code: '+str(methods.status_code))
+        print('Failed to create detection method: '+ detection_method)
+        return None    
+    
 def start_analysis(api_url, headers, project_id, branch_name, file_path):
     jsonBody= {
             "projectId": project_id

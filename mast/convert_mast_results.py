@@ -16,12 +16,17 @@ def mapSeverity(nativeSeverity):
     return "info"
   else:
     return "unspecified"
+  
+def add_string(list, value):
+    if value not in list:
+        list.append(value)
 
 def createSRMXML(inputFile,outputFile):
   # Load JSON data
   with open(inputFile, 'r', encoding='utf-8') as f:
     json_data = json.load(f)
   
+  detection_methods = []
   # Tool name used for the findings to be imported into SRM
   toolName=json_data.get("generatedBy","tort")
   # Using end date of the json output for test date
@@ -72,7 +77,11 @@ def createSRMXML(inputFile,outputFile):
     cweID=issue.get("cweId","")
     # TORT results can sometimes contain multiple cwe's in a single issue
     cweList= cweID.split(",")
-    methodType=issue.get("foundBy")
+    methodType=issue.get("foundBy","")
+    # add detection method to list:
+    if methodType != "":
+      add_string(detection_methods, methodType)
+
     # Will be used if populated for location
     fixLocation=issue.get("fixLocation","")
     # Not currently used
@@ -106,15 +115,23 @@ def createSRMXML(inputFile,outputFile):
     # just store the instance data for now, we will map this to "evidence" in SRM and dynamically write the XML later
     # I need more info here since all the instance data in my example are blank.
     instances = issue.get("instances",[])   
+    urls = []
+    for instance in instances:
+      urls.append(instance.get("url",""))
+  
+
+
 
     # Now that we have all the data lets build the XML finding
-    finding = ET.SubElement(findings, 'finding', severity=severity, type='unknown')
+    finding = ET.SubElement(findings, 'finding', severity=severity, type=methodType)
     tool = ET.SubElement(finding, 'tool', name=toolName, category=findingCategory, code=toolCode)
+    
 
     for cw in cweList:
       cwe = ET.SubElement(finding, 'cwe', id=cw)
     
-    nativeTool = ET.SubElement(finding, 'native-id', name=nativeToolName, value=nativeToolId)
+    nativeIDKey=toolName.upper()+" Finding ID"
+    nativeTool = ET.SubElement(finding, 'native-id', name=nativeIDKey, value=nativeToolId)
     descriptionXML = ET.SubElement(finding, 'description', format='html', include_in_hash='false')
     # add additional items to description
     description = "<h3>Description:</h3>"+description
@@ -142,12 +159,25 @@ def createSRMXML(inputFile,outputFile):
 
     descriptionXML.text = description
     pathToIssue=""
+    issueType="file"
+
     if fixLocation == "":
       pathToIssue = packageName
     else:
       pathToIssue = fixLocation
 
-    location = ET.SubElement(finding, 'location', type='file', path=pathToIssue)
+    # if pathToIssue is still blank, then we need to look at the URLs extracted from above
+    if pathToIssue == "":
+      for url in urls:
+        pathToIssue += url +"," 
+      # trim last ,
+      pathToIssue = pathToIssue[:-1]
+
+    if "https" in pathToIssue:
+      issueType="url"
+      
+
+    location = ET.SubElement(finding, 'location', type=issueType, path=pathToIssue)
     # variants = ET.SubElement(location, 'variants')
 
     # # Loop through instances and add variants to xml
@@ -164,6 +194,9 @@ def createSRMXML(inputFile,outputFile):
     # Write XML to file
     with open(outputFile, 'w', encoding='utf-8') as f:
         f.write(pretty_xml_as_string)
+
+  # return list of detection methods to add to SRM if needed
+  return detection_methods
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
