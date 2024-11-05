@@ -1,6 +1,7 @@
 # SRM Custom Connector Framework Example
 - [SRM Custom Connector Framework Example](#srm-custom-connector-framework-example)
 - [Overview](#overview)
+- [SRM Import Examples](#srm-import-examples)
 - [High Level Steps](#high-level-steps)
 - [Pre-requisites](#pre-requisites)
 - [SRM Custom Connector Example](#srm-custom-connector-example)
@@ -31,6 +32,10 @@
 
 # Overview
 While SRM boasts over 130+ integrations for pulling in results from third party tools into SRM, there will always be some cases where there is a missing integration.  This project is meant to lay out a framework that can be used to create a custom connector, going one step further than providing a script to parse results into SRM XML format.  This framework can be utilized to have SRM run an analysis to grab some 3rd party results, convert the results to SRM XML format and finally store those results within an SRM project. The analysis can then be scheduled to run and not require any custom steps in a CI/CD pipeline or manually done via the UI.
+
+# SRM Import Examples
+Other Examples of importing third party results into SRM:
+* [Importing MAST (Mobile Application Security Testing) Results into SRM](mast/readme.md)
 
 # High Level Steps
 Successfully building and configuring a "custom connector" in SRM consists of the following steps:
